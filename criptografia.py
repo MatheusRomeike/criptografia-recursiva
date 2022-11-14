@@ -3,66 +3,72 @@ from math import floor
 
 
 def criptografar(texto, chave):
-    lista = printable[0: 93]
-    if chave == 0 or chave % 2 == 0:
+    lista = printable[0: 75]
+    
+    if chave == 0:
         return texto
     else:
         for i in range(0, len(texto)):
-
             if(texto[i] == " "):
                 texto = texto[:i] + "~" + texto[i + 1:]
 
-            else:
+            if(texto[i] != "~"):
                 posicao = buscarPosicao(texto[i], lista)
-
                 if (posicao + 1 >= len(lista)):
-                    posicao = calcularPosicao(i)
+                    posicao = calcularPosicao(posicao)
 
                 texto = texto[:i] + lista[posicao + 1] + texto[i + 1:]
         return criptografar(texto, chave - 1)
 
-
 def buscarPosicao(letra, lista):
     return lista.index(letra)
 
-
 def calcularPosicao(numero):
-    numeroString = str(numero)
-    casasNumero = len(numeroString)
-    resultado = int(numeroString[floor(casasNumero / 2):casasNumero])
-    return resultado
-
+    while True:
+        if numero - 73 > 0:
+            return numero - 73              
+        else:
+            numero += 73
 
 def descriptografar(texto, chave):
-    lista = printable[0: 93]
-    if chave == 0 or chave % 2 == 0:
+    lista = printable[0: 75]
+    if chave == 0:
         return texto
     else:
         for i in range(0, len(texto)):
 
             if(texto[i] == "~"):
                 texto = texto[:i] + " " + texto[i + 1:]
-                print(texto)
 
-            else:
+            if (texto[i] != " "):
                 posicao = buscarPosicao(texto[i], lista)
                 if (posicao - 1 < 0):
-                    posicao = calcularPosicao(i)
+                    posicao = calcularPosicao(posicao)
+
                 texto = texto[:i] + lista[posicao - 1] + texto[i + 1:]
         return descriptografar(texto, chave - 1)
 
+def menu():
+    operacao = int(input("Informe 0 para criptografar e 1 para descriptografar: "))
+    chave = int(input("Informe uma chave positiva que deseja utilizar: "))
+    while chave < 0:
+        chave = int(input("Informe uma chave positiva válida que deseja utilizar: "))
 
-arquivo = open('texto_secreto.txt', 'r')
-conteudo = str(arquivo.readlines())
-textoSecreto = conteudo[2: len(conteudo) - 2]
+    arquivo = open('texto_secreto.txt', 'r')
+    conteudo = str(arquivo.readlines())
+    textoSecreto = conteudo[2: len(conteudo) - 2]
 
-retorno = criptografar(textoSecreto, 184)
-#retorno = descriptografar(textoSecreto, 1)
+    if operacao == 0:
+        retorno = criptografar(textoSecreto, chave)
+    else:
+        retorno = descriptografar(textoSecreto, chave)
 
-arquivo = open('texto_secreto.txt', 'w')
+    arquivo = open('texto_secreto.txt', 'w')
 
-listaRetorno = []
+    listaRetorno = []
 
-arquivo.write(retorno)
+    arquivo.write(retorno)
 
-arquivo.close()
+    arquivo.close()
+
+menu()
